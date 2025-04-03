@@ -90,6 +90,18 @@ class StockfishService {
       
       // Start the calculation
       this.sendCommand('go depth ' + depth);
+      
+      // Setup a timeout for fallback
+      setTimeout(() => {
+        // If the callback is still in the list, it means we didn't get a response
+        const index = this.moveCallbacks.indexOf(resolve);
+        if (index >= 0) {
+          // Remove from the list
+          this.moveCallbacks.splice(index, 1);
+          // Use fallback
+          resolve(simulateBestMove(game));
+        }
+      }, 5000); // 5 second timeout
     });
   }
   

@@ -42,7 +42,7 @@ const ChessUI: React.FC<ChessUIProps> = ({ initialPosition = "start" }) => {
 
   // Function to get a suggested move
   const getSuggestedMove = useCallback(async () => {
-    if (!game || !showSuggestions || game.isGameOver()) return;
+    if (!game || !showSuggestions || isGameOver(game)) return;
     
     if (game.turn() === playerColor) {
       setIsAnalyzing(true);
@@ -171,6 +171,38 @@ const ChessUI: React.FC<ChessUIProps> = ({ initialPosition = "start" }) => {
     });
   };
 
+  // Helper function to check if the game is over
+  const isGameOver = (chess: Chess) => {
+    return chess.in_checkmate() || chess.in_draw() || 
+           chess.in_stalemate() || chess.in_threefold_repetition() || 
+           chess.insufficient_material();
+  };
+
+  // Helper function to check checkmate
+  const isCheckmate = (chess: Chess) => {
+    return chess.in_checkmate();
+  };
+
+  // Helper function to check draw
+  const isDraw = (chess: Chess) => {
+    return chess.in_draw();
+  };
+
+  // Helper function to check stalemate
+  const isStalemate = (chess: Chess) => {
+    return chess.in_stalemate();
+  };
+
+  // Helper function to check insufficient material
+  const isInsufficientMaterial = (chess: Chess) => {
+    return chess.insufficient_material();
+  };
+
+  // Helper function to check threefold repetition
+  const isThreefoldRepetition = (chess: Chess) => {
+    return chess.in_threefold_repetition();
+  };
+
   if (!gameStarted) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -238,15 +270,14 @@ const ChessUI: React.FC<ChessUIProps> = ({ initialPosition = "start" }) => {
             </div>
           )}
           
-          {/* Fix for isGameOver() - Update with proper chess.js API methods */}
-          {(game.isCheckmate() || game.isDraw()) && (
+          {isGameOver(game) && (
             <div className="bg-blue-50 border border-blue-200 rounded p-3">
               <p className="text-sm font-medium">Game Over</p>
-              {game.isCheckmate() && <p className="text-sm">Checkmate!</p>}
-              {game.isDraw() && <p className="text-sm">Draw</p>}
-              {game.isStalemate() && <p className="text-sm">Stalemate</p>}
-              {game.isInsufficientMaterial() && <p className="text-sm">Insufficient Material</p>}
-              {game.isThreefoldRepetition() && <p className="text-sm">Threefold Repetition</p>}
+              {isCheckmate(game) && <p className="text-sm">Checkmate!</p>}
+              {isDraw(game) && <p className="text-sm">Draw</p>}
+              {isStalemate(game) && <p className="text-sm">Stalemate</p>}
+              {isInsufficientMaterial(game) && <p className="text-sm">Insufficient Material</p>}
+              {isThreefoldRepetition(game) && <p className="text-sm">Threefold Repetition</p>}
             </div>
           )}
           
@@ -268,7 +299,7 @@ const ChessUI: React.FC<ChessUIProps> = ({ initialPosition = "start" }) => {
               <div className="flex justify-between">
                 <span>Check:</span>
                 <span className="font-medium">
-                  {game.inCheck() ? 'Yes' : 'No'}
+                  {game.in_check() ? 'Yes' : 'No'}
                 </span>
               </div>
               <div className="flex justify-between">
