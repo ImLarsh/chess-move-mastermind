@@ -47,10 +47,11 @@ class StockfishService {
         }
       };
       
-      // Initialize the engine
+      // Initialize the engine with stronger settings
       this.sendCommand('uci');
-      this.sendCommand('setoption name Threads value 4');
-      this.sendCommand('setoption name Hash value 16');
+      this.sendCommand('setoption name Threads value 8'); // Use more threads for better analysis
+      this.sendCommand('setoption name Hash value 128'); // Increase hash size for better performance
+      this.sendCommand('setoption name MultiPV value 1'); // Only show the best line
       this.sendCommand('isready');
     } catch (error) {
       console.error('Failed to initialize Stockfish:', error);
@@ -73,7 +74,7 @@ class StockfishService {
     return this.readyPromise;
   }
   
-  public async getBestMove(game: Chess, depth: number = 15): Promise<string> {
+  public async getBestMove(game: Chess, depth: number = 20): Promise<string> {
     await this.waitUntilReady();
     
     // If we had an initialization error, use the fallback immediately
@@ -88,8 +89,8 @@ class StockfishService {
       // Set the position
       this.sendCommand('position fen ' + game.fen());
       
-      // Start the calculation
-      this.sendCommand('go depth ' + depth);
+      // Start calculation with higher depth and more time
+      this.sendCommand('go depth ' + depth + ' movetime 2000');
       
       // Setup a timeout for fallback
       setTimeout(() => {

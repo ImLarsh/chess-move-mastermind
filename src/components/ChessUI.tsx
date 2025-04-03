@@ -48,8 +48,8 @@ const ChessUI: React.FC<ChessUIProps> = ({ initialPosition = "start" }) => {
       setIsAnalyzing(true);
       
       try {
-        // Get best move from Stockfish
-        const bestMove = await stockfishService.getBestMove(game)
+        // Get best move from Stockfish with higher depth for better analysis
+        const bestMove = await stockfishService.getBestMove(game, 20)
           .catch(() => {
             // If Stockfish fails, use simulation as fallback
             console.warn("Stockfish failed, using simulation instead");
@@ -266,7 +266,7 @@ const ChessUI: React.FC<ChessUIProps> = ({ initialPosition = "start" }) => {
         <div className="flex flex-col gap-4">
           {isAnalyzing && showSuggestions && (
             <div className="bg-yellow-50 border border-yellow-200 rounded p-3">
-              <p className="text-sm text-yellow-800">Analyzing position...</p>
+              <p className="text-sm text-yellow-800">Analyzing position for best move...</p>
             </div>
           )}
           

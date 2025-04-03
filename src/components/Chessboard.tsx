@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { Chess, Move, Square } from "chess.js";
 import { cn } from "@/lib/utils";
@@ -266,22 +267,22 @@ const Chessboard: React.FC<ChessboardProps> = ({
                 onTouchStart={(e) => piece && handleDragStart(square, e)}
               >
                 {/* Rendering square coordinates in corners */}
-                {(file === (flipped ? 7 : 0) || rank === (flipped ? 7 : 0)) && (
+                {(file === (flipped ? 7 : 0) || rank === (flipped ? 0 : 7)) && (
                   <div className="absolute text-xs opacity-70">
                     {file === (flipped ? 7 : 0) && (
                       <span className={cn(
                         "absolute bottom-0 left-1",
                         isLight ? "text-chess-dark-square" : "text-chess-light-square"
                       )}>
-                        {String.fromCharCode(97 + file)}
+                        {rank + 1}
                       </span>
                     )}
-                    {rank === (flipped ? 7 : 0) && (
+                    {rank === (flipped ? 0 : 7) && (
                       <span className={cn(
                         "absolute top-0 right-1",
                         isLight ? "text-chess-dark-square" : "text-chess-light-square"
                       )}>
-                        {rank + 1}
+                        {String.fromCharCode(97 + file)}
                       </span>
                     )}
                   </div>
