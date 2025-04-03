@@ -10,6 +10,7 @@ class StockfishService {
   private resolveReadyPromise: (() => void) | null = null;
   private readyPromise: Promise<void>;
   private moveCallbacks: ((bestMove: string) => void)[] = [];
+  private hasInitError = false;
   
   constructor() {
     // Create a promise that resolves when the engine is ready
@@ -53,6 +54,12 @@ class StockfishService {
       this.sendCommand('isready');
     } catch (error) {
       console.error('Failed to initialize Stockfish:', error);
+      // Mark that we had an initialization error
+      this.hasInitError = true;
+      // Resolve the ready promise to avoid hanging
+      if (this.resolveReadyPromise) {
+        this.resolveReadyPromise();
+      }
     }
   }
   
@@ -68,6 +75,11 @@ class StockfishService {
   
   public async getBestMove(game: Chess, depth: number = 15): Promise<string> {
     await this.waitUntilReady();
+    
+    // If we had an initialization error, use the fallback immediately
+    if (this.hasInitError || !this.engine) {
+      return simulateBestMove(game);
+    }
     
     return new Promise((resolve) => {
       // Add the callback

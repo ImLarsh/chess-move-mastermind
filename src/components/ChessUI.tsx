@@ -238,7 +238,8 @@ const ChessUI: React.FC<ChessUIProps> = ({ initialPosition = "start" }) => {
             </div>
           )}
           
-          {game.isGameOver() && (
+          {/* Fix for isGameOver() - Update with proper chess.js API methods */}
+          {(game.isCheckmate() || game.isDraw()) && (
             <div className="bg-blue-50 border border-blue-200 rounded p-3">
               <p className="text-sm font-medium">Game Over</p>
               {game.isCheckmate() && <p className="text-sm">Checkmate!</p>}
